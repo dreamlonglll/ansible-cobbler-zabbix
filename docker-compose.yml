@@ -4,7 +4,7 @@ services:
     image: mysql:5.7
     networks: zabbix-net
     volume:
-      - db_data: /var/lib/mysql
+      - "./db_data:/var/lib/mysql"
     restart: always
     environment:
       MYSQL_PASSWORD: &MYSQL_PASSWORD "123456"
@@ -17,7 +17,7 @@ services:
     environment: 
       DB_SERVER_HOST: "zabbix_db"
       MYSQL_USER: "root" 
-      MYSQL_PASSWORD: *MYSQL_PASSWORD
+      <<: *MYSQL_PASSWORD
     ports:
       - "32002:10051"
     depends_on:
@@ -30,12 +30,23 @@ services:
       DB_SERVER_HOST: "zabbix_db"
       MYSQL_USER: "root" 
       MYSQL_PASSWORD: *MYSQL_PASSWORD
-      ZBX_SERVER_HOST: "zabbix_server"
+      <<: "zabbix_server"
     ports:
       - "32003:80"
       - "32004:443"
     depends_on:
       - zabbix_db
       - zabbix_server
+  ansible:
+    image: dreamlongs/ansible
+    restart: always
+    ports:
+      - "32005:443"
+    entrypoint: "/entrypoint.sh ansible-tower"
+  cobbler:
+    image: dreamlongs/cobbler
+    network_mode: "host"
+    privileged: true
+    
 networks:
   zabbix-net:
