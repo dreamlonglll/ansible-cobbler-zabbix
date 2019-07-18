@@ -48,9 +48,12 @@ services:
     entrypoint: "/entrypoint.sh ansible-tower"
   cobbler:
     image: dreamlongs/cobbler
-    network_mode: "host"
+    network_mode: "host"        
     privileged: true
-    
+    #cap_add:
+    #  - ALL
+    #entrypoint: "/entrypoint.sh ${IPADDRESS}"
+    #command: "/entrypoint.sh ${IPADDRESS}"   
 
 networks:
   zabbix-net:
