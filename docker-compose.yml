@@ -54,6 +54,14 @@ services:
     #  - ALL
     #entrypoint: "/entrypoint.sh ${IPADDRESS}"
     #command: "/entrypoint.sh ${IPADDRESS}"   
-
+  main_web:
+    image: dreamlongs/netcore2.2
+    restart: always
+    ports:
+      - "32006:5000"
+    volumes:
+      - "./publish:/app"
+    working_dir: "/app"    
+    entrypoint: "dotnet MaintainPlatform.dll"
 networks:
   zabbix-net:
