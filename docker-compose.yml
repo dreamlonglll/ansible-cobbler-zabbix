@@ -3,7 +3,7 @@ services:
   zabbix_db:
     image: mysql:5.7
     networks: 
-      - zabbix-net
+      - maintain-net
     volumes:
       - "./db_data:/var/lib/mysql"
     restart: always
@@ -14,7 +14,7 @@ services:
   zabbix_server:
     image: zabbix/zabbix-server-mysql:centos-latest
     networks: 
-      - zabbix-net
+      - maintain-net
     restart: always
     environment: 
       DB_SERVER_HOST: "zabbix_db"
@@ -27,7 +27,7 @@ services:
   zabbix_web:
     image: zabbix/zabbix-web-nginx-mysql:centos-latest
     networks: 
-      - zabbix-net
+      - maintain-net
     restart: always
     environment: 
       DB_SERVER_HOST: "zabbix_db"
@@ -43,6 +43,10 @@ services:
   ansible:
     image: dreamlongs/ansible
     restart: always
+    networks: 
+      - maintain-net
+    volumes:
+      - "./favicon.ico:/var/lib/awx/public/static/assets/favicon.ico"
     ports:
       - "32005:443"
     entrypoint: "/entrypoint.sh ansible-tower"
@@ -50,18 +54,20 @@ services:
     image: dreamlongs/cobbler
     network_mode: "host"        
     privileged: true
-    #cap_add:
-    #  - ALL
-    #entrypoint: "/entrypoint.sh ${IPADDRESS}"
-    #command: "/entrypoint.sh ${IPADDRESS}"   
+    entrypoint: "/sbin/init"
+    volumes:
+      - "./favicon.ico:/var/www/cobbler_webui_content/favicon.ico"
+      - "./entrypoint.sh:/entrypoint.sh"
   main_web:
     image: dreamlongs/netcore2.2
     restart: always
     ports:
-      - "32006:5000"
+      - "80:5000"
+    networks: 
+      - maintain-net
     volumes:
       - "./publish:/app"
     working_dir: "/app"    
     entrypoint: "dotnet MaintainPlatform.dll"
 networks:
-  zabbix-net:
+  maintain-net:
