@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 IPADDR=$1
 echo $IPADDR
 if [ ! -n "$1"  ]
