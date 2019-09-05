@@ -38,8 +38,7 @@ services:
       - "32003:80"
       - "32004:443"
     volumes:
-      - "./favicon.ico:/usr/share/zabbix/favicon.ico"
-      - "./logo.svg:/usr/share/zabbix/assets/img/icon-sprite.svg"
+      - "./favicon.ico:/usr/share/zabbix/favicon.ico" 
     depends_on:
       - zabbix_db
       - zabbix_server
@@ -50,9 +49,10 @@ services:
       - maintain-net
     volumes:
       - "./favicon.ico:/var/lib/awx/public/static/assets/favicon.ico"
-      - "./hosts:/etc/ansible/hosts"
+      - "./hosts:/app/wwwroot/hosts"
     ports:
       - "32005:443"
+      - "32006:5432"
     entrypoint: "/entrypoint.sh ansible-tower"
   cobbler:
     image: dreamlongs/cobbler
@@ -71,7 +71,6 @@ services:
       - maintain-net
     volumes:
       - "./publish:/app"
-      - "./hosts:/app/wwwroot/hosts"
     working_dir: "/app"    
     entrypoint: "dotnet MaintainPlatform.dll"
 networks:
