@@ -1,9 +1,9 @@
 version: "2.1"
 services:
-  db:
+  zabbix_db:
     image: mysql:5.7
     networks: 
-      - net
+      - maintain-net
     volumes:
       - "./db_data:/var/lib/mysql"
     restart: always
@@ -14,23 +14,23 @@ services:
   zabbix_server:
     image: zabbix/zabbix-server-mysql:centos-latest
     networks: 
-      - net
+      - maintain-net
     restart: always
     environment: 
-      DB_SERVER_HOST: "db"
+      DB_SERVER_HOST: "zabbix_db"
       MYSQL_USER: "root" 
       MYSQL_PASSWORD: *MYSQL_PASSWORD
     ports:
       - "32002:10051"
     depends_on:
-      - db
+      - zabbix_db
   zabbix_web:
     image: zabbix/zabbix-web-nginx-mysql:centos-latest
     networks: 
-      - net
+      - maintain-net
     restart: always
     environment: 
-      DB_SERVER_HOST: "db"
+      DB_SERVER_HOST: "zabbix_db"
       MYSQL_USER: "root" 
       MYSQL_PASSWORD: *MYSQL_PASSWORD
       ZBX_SERVER_HOST: "zabbix_server"
@@ -40,16 +40,16 @@ services:
     volumes:
       - "./favicon.ico:/usr/share/zabbix/favicon.ico" 
     depends_on:
-      - db
+      - zabbix_db
       - zabbix_server
   ansible:
     image: dreamlongs/ansible
     restart: always
     networks: 
-      - net
+      - maintain-net
     volumes:
       - "./favicon.ico:/var/lib/awx/public/static/assets/favicon.ico"
-      - "./projects:/var/lib/awx"
+      - "./hosts:/app/wwwroot/hosts"
     ports:
       - "32005:443"
       - "32006:5432"
@@ -68,12 +68,12 @@ services:
     ports:
       - "80:5000"
     networks: 
-      - net
+      - maintain-net
     volumes:
       - "./publish:/app"
-    working_dir: "/app"    
     depends_on:
-      - db
+      - zabbix_db
+    working_dir: "/app"    
     entrypoint: "dotnet MaintainPlatform.dll"
 networks:
-  net:
+  maintain-net:
