@@ -1,6 +1,6 @@
 version: "2.1"
 services:
-  zabbix_db:
+  db:
     image: mysql:5.7
     networks: 
       - maintain-net
@@ -17,20 +17,20 @@ services:
       - maintain-net
     restart: always
     environment: 
-      DB_SERVER_HOST: "zabbix_db"
+      DB_SERVER_HOST: "db"
       MYSQL_USER: "root" 
       MYSQL_PASSWORD: *MYSQL_PASSWORD
     ports:
       - "32002:10051"
     depends_on:
-      - zabbix_db
+      - db
   zabbix_web:
     image: zabbix/zabbix-web-nginx-mysql:centos-latest
     networks: 
       - maintain-net
     restart: always
     environment: 
-      DB_SERVER_HOST: "zabbix_db"
+      DB_SERVER_HOST: "db"
       MYSQL_USER: "root" 
       MYSQL_PASSWORD: *MYSQL_PASSWORD
       ZBX_SERVER_HOST: "zabbix_server"
@@ -40,7 +40,7 @@ services:
     volumes:
       - "./favicon.ico:/usr/share/zabbix/favicon.ico" 
     depends_on:
-      - zabbix_db
+      - db
       - zabbix_server
   ansible:
     image: dreamlongs/ansible
@@ -49,9 +49,11 @@ services:
       - maintain-net
     volumes:
       - "./favicon.ico:/var/lib/awx/public/static/assets/favicon.ico"
-      - "./hosts:/app/wwwroot/hosts"
+      - "./projects:/var/lib/awx"
     ports:
-      - "32005:443"
+      - "
+      
+      :443"
       - "32006:5432"
     entrypoint: "/entrypoint.sh ansible-tower"
   cobbler:
