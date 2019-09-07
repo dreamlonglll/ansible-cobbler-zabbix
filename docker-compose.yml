@@ -51,9 +51,7 @@ services:
       - "./favicon.ico:/var/lib/awx/public/static/assets/favicon.ico"
       - "./projects:/var/lib/awx"
     ports:
-      - "
-      
-      :443"
+      - "32005:443"
       - "32006:5432"
     entrypoint: "/entrypoint.sh ansible-tower"
   cobbler:
