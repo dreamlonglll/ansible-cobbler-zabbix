@@ -25,7 +25,8 @@ services:
     depends_on:
       - zabbix_db
   zabbix_web:
-    image: zabbix/zabbix-web-nginx-mysql:centos-latest
+    image: dreamlongs/zabbix_web
+    # zabbix/zabbix-web-nginx-mysql:centos-latest
     networks: 
       - maintain-net
     restart: always
@@ -71,8 +72,6 @@ services:
       - maintain-net
     volumes:
       - "./publish:/app"
-    depends_on:
-      - zabbix_db
     working_dir: "/app"    
     entrypoint: "dotnet MaintainPlatform.dll"
 networks:
