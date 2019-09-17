@@ -5,7 +5,7 @@ services:
     networks: 
       - maintain-net
     volumes:
-      - "./mysql_db:/var/lib/mysql"
+      - "./db_data:/var/lib/mysql"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: &MYSQL_PASSWORD "123456"
@@ -52,7 +52,6 @@ services:
       - "./favicon.ico:/var/lib/awx/public/static/assets/favicon.ico"
       - "./hosts:/app/wwwroot/hosts"
       - "./zh.json:/var/lib/awx/public/static/languages/zh.json"
-      - "./ansible_db:/var/lib/postgresql/9.6/main/base"
     ports:
       - "32005:443"
       - "32006:5432"
