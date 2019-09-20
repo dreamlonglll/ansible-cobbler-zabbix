@@ -64,6 +64,7 @@ services:
     volumes:
       - "./favicon.ico:/var/www/cobbler_webui_content/favicon.ico"
       - "./entrypoint.sh:/entrypoint.sh"
+      - "./locales:/var/www/cobbler_webui_content/locales"
   main_web:
     image: dreamlongs/netcore2.2
     restart: always
