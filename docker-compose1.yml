@@ -1,4 +1,4 @@
-version: "3.4"
+version: "2.1"
 services:
   zabbix_db:
     image: mysql:5.7
@@ -52,9 +52,6 @@ services:
       - "./favicon.ico:/var/lib/awx/public/static/assets/favicon.ico"
       - "./hosts:/app/wwwroot/hosts"
       - "./zh.json:/var/lib/awx/public/static/languages/zh.json"
-      - "./ansible/job_status:/var/lib/awx/job_status"
-      - "./ansible/projects:/var/lib/awx/projects"
-      - "./main:/var/lib/postgresql/9.6/main"
     ports:
       - "32005:443"
       - "32006:5432"
