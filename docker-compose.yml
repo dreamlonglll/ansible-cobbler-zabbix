@@ -40,6 +40,8 @@ services:
       - "32004:443"
     volumes:
       - "./favicon.ico:/usr/share/zabbix/favicon.ico" 
+      #- "./zabbix/CFilter.php:/usr/share/zabbix/include/classes/html/CFilter.php"
+      #- "./zabbix/chkbxrange.js:/usr/share/zabbix/js/chkbxrange.js"
     depends_on:
       - zabbix_db
       - zabbix_server
@@ -68,6 +70,8 @@ services:
       - "./favicon.ico:/var/www/cobbler_webui_content/favicon.ico"
       - "./entrypoint.sh:/entrypoint.sh"
       - "./locales:/var/www/cobbler_webui_content/locales"
+      #- "./cobbler_web/cobbler_web:/usr/share/cobbler/web/cobbler_web"
+      #- "./cobbler_web/cobbler_webui_content:/var/www/cobbler_webui_content"
   main_web:
     image: dreamlongs/netcore2.2
     restart: always
@@ -79,5 +83,21 @@ services:
       - "./publish:/app"
     working_dir: "/app"    
     entrypoint: "dotnet MaintainPlatform.dll"
+  gitlab:
+    image: gitlab/gitlab-ce
+    networks:
+      - maintain-net
+    restart: always
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://172.100.40.161:8929'
+        gitlab_rails['gitlab_shell_ssh_port'] = 32008
+    volumes:
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/data:/var/opt/gitlab
+    ports:
+      - "32008:22"
+      - "32007:8929"
 networks:
   maintain-net:
