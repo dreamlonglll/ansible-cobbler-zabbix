@@ -1,0 +1,29 @@
+cobbler:
+  image: oms/cobbler:latest
+  volumes:
+    - ./cobbler/mnt:/mnt:ro
+    - ./cobbler/www_cobbler:/var/www/cobbler
+    - ./cobbler/lib_cobbler:/var/lib/cobbler
+  env_file: cobbler.env
+  net: "host"
+nfs:
+  image: fuzzle/docker-nfs-server:latest
+  privileged: true
+  restart: always
+  volumes:
+    - ./cobbler/install:/install
+  environment:
+    NFS_EXPORT_DIR_1: "/install"
+    NFS_EXPORT_DOMAIN_1: "*"
+    NFS_EXPORT_OPTIONS_1: "ro,insecure,no_subtree_check,no_root_squash,fsid=1"
+  ports:
+    - "111:111"
+    - "111:111/udp"
+    - "2049:2049"
+    - "2049:2049/udp"
+    - "32765:32765"
+    - "32765:32765/udp"
+    - "32766:32766"
+    - "32766:32766/udp"
+    - "32767:32767"
+    - "32767:32767/udp"

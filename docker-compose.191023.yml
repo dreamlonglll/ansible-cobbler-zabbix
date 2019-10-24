@@ -61,7 +61,7 @@ services:
       - "32006:5432"
     entrypoint: "/entrypoint.sh ansible-tower"
   cobbler:
-    image: dreamlongs/cobbler:v1.5
+    image: dreamlongs/cobbler
     network_mode: "host"        
     privileged: true
     entrypoint: "/sbin/init"
@@ -69,10 +69,8 @@ services:
       - "./favicon.ico:/var/www/cobbler_webui_content/favicon.ico"
       - "./entrypoint.sh:/entrypoint.sh"
       - "./locales:/var/www/cobbler_webui_content/locales"
-      - "./cobbler/cobbler:/var/www/cobbler"
-      - "./cobbler/lib_cobbler:/var/lib/cobbler"
-      - "./cobbler/install:/install"
-      - "/mnt:/mnt"
+      #- "./cobbler_web/cobbler_web:/usr/share/cobbler/web/cobbler_web"
+      #- "./cobbler_web/cobbler_webui_content:/var/www/cobbler_webui_content"
   main_web:
     image: dreamlongs/netcore2.2
     restart: always
@@ -91,7 +89,7 @@ services:
     restart: always
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://192.168.135.181:8929'
+        external_url 'https://172.100.40.161:8929'
         gitlab_rails['gitlab_shell_ssh_port'] = 32008
     volumes:
       - ./gitlab/config:/etc/gitlab
@@ -100,39 +98,5 @@ services:
     ports:
       - "32008:22"
       - "32007:8929"
-  grafana:
-    image: grafana/grafana:zabbix
-    networks:
-      - maintain-net
-    restart: always
-    volumes:
-      - ./grafana:/var/lib/grafana
-    ports:
-      - "32009:3000"
-    user: "root"
-    command: "chown -R grafana:grafana /var/lib/grafana"
-  nfs:
-    image: fuzzle/docker-nfs-server:latest
-    privileged: true
-    restart: always
-    networks:
-      - maintain-net
-    volumes:
-      - ./cobbler/install:/install
-    environment:
-      NFS_EXPORT_DIR_1: "/install"
-      NFS_EXPORT_DOMAIN_1: "*"
-      NFS_EXPORT_OPTIONS_1: "ro,insecure,no_subtree_check,no_root_squash,fsid=1"
-    ports:
-      - "111:111"
-      - "111:111/udp"
-      - "2049:2049"
-      - "2049:2049/udp"
-      - "32765:32765"
-      - "32765:32765/udp"
-      - "32766:32766"
-      - "32766:32766/udp"
-      - "32767:32767"
-      - "32767:32767/udp"
 networks:
   maintain-net:
